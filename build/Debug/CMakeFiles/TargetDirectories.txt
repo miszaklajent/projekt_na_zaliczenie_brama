@@ -1,0 +1,6 @@
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/build/Debug/CMakeFiles/Projekt_bramy_1.dir
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/build/Debug/CMakeFiles/edit_cache.dir
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/build/Debug/CMakeFiles/rebuild_cache.dir
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/build/Debug/cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/build/Debug/cmake/stm32cubemx/CMakeFiles/edit_cache.dir
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/build/Debug/cmake/stm32cubemx/CMakeFiles/rebuild_cache.dir

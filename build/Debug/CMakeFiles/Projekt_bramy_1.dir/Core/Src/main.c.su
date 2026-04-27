@@ -1,0 +1,5 @@
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:70:5:main	8	static
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:118:6:SystemClock_Config	88	static
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:159:13:MX_TIM1_Init	64	static
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:210:13:MX_GPIO_Init	24	static
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:234:6:Error_Handler	8	static,ignoring_inline_asm

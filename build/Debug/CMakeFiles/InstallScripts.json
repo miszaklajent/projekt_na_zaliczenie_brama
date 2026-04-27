@@ -1,0 +1,8 @@
+{
+	"InstallScripts" : 
+	[
+		"/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/build/Debug/cmake_install.cmake",
+		"/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/build/Debug/cmake/stm32cubemx/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
