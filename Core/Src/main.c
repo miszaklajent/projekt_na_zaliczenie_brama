@@ -46,8 +46,8 @@ TIM_HandleTypeDef htim3;
 
 /* USER CODE BEGIN PV */
 uint32_t rawCounter = 0;
-uint32_t counter = 0;
-uint32_t lastCounter = 0; 
+int32_t targetPosition = 0;
+
 float motorPosition = 0;
 /* USER CODE END PV */
 
@@ -66,11 +66,11 @@ void setMotor(uint32_t speed, uint8_t direction)
 {
   switch (direction)
   {
-    case 0: // Forward
+    case 0: // Reverse
       __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 0);
       __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, speed);
       break;
-    case 1: // Reverse
+    case 1: // Forward
       __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, speed);
       __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, 0);
       break;
@@ -130,21 +130,28 @@ int main(void)
   while (1)
   {
     rawCounter = __HAL_TIM_GET_COUNTER(&htim1);
-    motorPosition = (float)rawCounter / 28.0f;
+    int32_t counter = (int32_t)rawCounter;
+    motorPosition = (float)counter / 8340.0f;
 
-    // setMotor(200, 0); // Set motor speed to 50% forward
+    targetPosition = 1;
+    // int targetPosition = 250*sinf(prevT/1e6);
 
-    int targetPosition = 8340; // Target position in degrees
-
-    while (rawCounter < targetPosition) {
-      setMotor(200, 1); // Set motor speed to 50% forward
-      rawCounter = __HAL_TIM_GET_COUNTER(&htim1);
+    if (motorPosition < targetPosition - 0.01f)
+    {
+      setMotor(255, 1); // Forward at full speed
     }
-    while (rawCounter > targetPosition+20) {
-      setMotor(200, 0); // Set motor speed to 50% forward
-      rawCounter = __HAL_TIM_GET_COUNTER(&htim1);
+    else if (motorPosition > targetPosition + 0.01f)
+    {
+      setMotor(255, 0); // Reverse at full speed
     }
-    setMotor(0, 3); // Stop the motor
+    else
+    {
+      setMotor(0, 3); // Stop
+    }
+  
+      // HAL_Delay(10);
+
+
 
 
     /* USER CODE END WHILE */
