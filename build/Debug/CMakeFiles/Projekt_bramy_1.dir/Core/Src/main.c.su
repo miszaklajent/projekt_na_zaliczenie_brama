@@ -1,7 +1,7 @@
-/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:66:6:setMotor	16	static
-/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:95:5:main	16	static
-/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:169:6:SystemClock_Config	88	static
-/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:210:13:MX_TIM1_Init	64	static
-/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:261:13:MX_TIM3_Init	48	static
-/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:314:13:MX_GPIO_Init	24	static
-/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:338:6:Error_Handler	8	static,ignoring_inline_asm
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:65:6:setMotor	16	static
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:94:5:main	16	static
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:170:6:SystemClock_Config	88	static
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:211:13:MX_TIM2_Init	64	static
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:260:13:MX_TIM3_Init	48	static
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:313:13:MX_GPIO_Init	16	static
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:336:6:Error_Handler	8	static,ignoring_inline_asm

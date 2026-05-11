@@ -1,6 +1,6 @@
 /Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/stm32g0xx_hal_msp.c:64:6:HAL_MspInit	16	static
-/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/stm32g0xx_hal_msp.c:87:6:HAL_TIM_Encoder_MspInit	96	static
-/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/stm32g0xx_hal_msp.c:143:6:HAL_TIM_PWM_MspInit	24	static
-/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/stm32g0xx_hal_msp.c:161:6:HAL_TIM_MspPostInit	48	static
-/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/stm32g0xx_hal_msp.c:194:6:HAL_TIM_Encoder_MspDeInit	16	static
-/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/stm32g0xx_hal_msp.c:225:6:HAL_TIM_PWM_MspDeInit	16	static
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/stm32g0xx_hal_msp.c:87:6:HAL_TIM_Encoder_MspInit	56	static
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/stm32g0xx_hal_msp.c:124:6:HAL_TIM_PWM_MspInit	24	static
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/stm32g0xx_hal_msp.c:141:6:HAL_TIM_MspPostInit	48	static
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/stm32g0xx_hal_msp.c:174:6:HAL_TIM_Encoder_MspDeInit	16	static
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/stm32g0xx_hal_msp.c:203:6:HAL_TIM_PWM_MspDeInit	16	static
