@@ -1,7 +1,9 @@
-/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:65:6:setMotor	16	static
-/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:94:5:main	16	static
-/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:170:6:SystemClock_Config	88	static
-/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:211:13:MX_TIM2_Init	64	static
-/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:260:13:MX_TIM3_Init	48	static
-/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:313:13:MX_GPIO_Init	16	static
-/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:336:6:Error_Handler	8	static,ignoring_inline_asm
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:78:6:HAL_TIM_PeriodElapsedCallback	24	static
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:124:6:setMotor	16	static
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:153:5:main	16	static
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:225:6:SystemClock_Config	88	static
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:266:13:MX_TIM2_Init	64	static
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:315:13:MX_TIM3_Init	48	static
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:368:13:MX_TIM14_Init	8	static
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:399:13:MX_GPIO_Init	16	static
+/Users/michalmaczka/Documents/zProjekty/stm32/WS1/Projekt_bramy_1/Core/Src/main.c:422:6:Error_Handler	8	static,ignoring_inline_asm

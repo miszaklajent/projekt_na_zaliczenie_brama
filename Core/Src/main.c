@@ -43,12 +43,26 @@ void setMotor(uint32_t speed, uint8_t direction);
 /* Private variables ---------------------------------------------------------*/
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
+TIM_HandleTypeDef htim14;
 
 /* USER CODE BEGIN PV */
 uint32_t rawCounter = 0;
-int32_t targetPosition = 0;
+int32_t signedcounter;
 
 float motorPosition = 0;
+float targetPosition = 0;
+
+float kp = 0;
+float ki = 100;
+float kd = 160;
+
+float dt = 0.01f;
+float Error = 0;
+float prevError = 0;
+float integral = 0;
+float derivative = 0;
+float controlOutput = 0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -56,7 +70,52 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_TIM2_Init(void);
+static void MX_TIM14_Init(void);
 /* USER CODE BEGIN PFP */
+
+//the sustem tick for pid control
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
+  if(htim->Instance == TIM14)
+  {
+    rawCounter = __HAL_TIM_GET_COUNTER(&htim2);
+    int32_t counter = (int32_t)rawCounter;
+    motorPosition = (float)counter / 4200.0f;  // 3600.0f;;//8340.0f; 3840
+    signedcounter = (int32_t)rawCounter;
+
+    if (motorPosition < targetPosition - 0.01f)
+    {
+      setMotor(255, 1); // Forward at full speed
+    }
+    else if (motorPosition > targetPosition + 0.01f)
+    {
+      setMotor(255, 0); // Reverse at full speed
+    }
+    else
+    {
+      setMotor(0, 3); // Stop
+    }
+
+    // Error = targetPosition - motorPosition;
+    // derivative = (Error - prevError) / dt;
+    // integral += Error * dt;
+
+    // controlOutput = kp * Error + ki * integral + kd * derivative;
+
+    // if (controlOutput > 255)
+    //   controlOutput = 255;
+    // else if (controlOutput < -255)
+    //   controlOutput = -255;
+
+    // if (controlOutput > 0)
+    //   setMotor((uint32_t)controlOutput, 1); // Forward
+    // else if (controlOutput < 0)
+    //   setMotor((uint32_t)(-controlOutput), 0); // Reverse
+    // else
+    //   setMotor(0, 3); // Stop
+  }
+}
+
 
 /* USER CODE END PFP */
 
@@ -101,7 +160,7 @@ int main(void)
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+   HAL_Init();
 
   /* USER CODE BEGIN Init */
 
@@ -118,10 +177,12 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM3_Init();
   MX_TIM2_Init();
+  MX_TIM14_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
+  HAL_TIM_Base_Start_IT(&htim14);
 
   /* USER CODE END 2 */
 
@@ -134,20 +195,14 @@ int main(void)
     motorPosition = (float)counter / 8340.0f;
 
     targetPosition = 1;
+    HAL_Delay(5000);
+    targetPosition = 0;
+    HAL_Delay(5000);
     // int targetPosition = 250*sinf(prevT/1e6);
 
-    if (motorPosition < targetPosition - 0.01f)
-    {
-      setMotor(255, 1); // Forward at full speed
-    }
-    else if (motorPosition > targetPosition + 0.01f)
-    {
-      setMotor(255, 0); // Reverse at full speed
-    }
-    else
-    {
-      setMotor(0, 3); // Stop
-    }
+
+
+
 
     // HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, GPIO_PIN_SET);
   
@@ -302,6 +357,37 @@ static void MX_TIM3_Init(void)
 
   /* USER CODE END TIM3_Init 2 */
   HAL_TIM_MspPostInit(&htim3);
+
+}
+
+/**
+  * @brief TIM14 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM14_Init(void)
+{
+
+  /* USER CODE BEGIN TIM14_Init 0 */
+
+  /* USER CODE END TIM14_Init 0 */
+
+  /* USER CODE BEGIN TIM14_Init 1 */
+
+  /* USER CODE END TIM14_Init 1 */
+  htim14.Instance = TIM14;
+  htim14.Init.Prescaler = 160-1;
+  htim14.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim14.Init.Period = 100;
+  htim14.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim14.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim14) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM14_Init 2 */
+
+  /* USER CODE END TIM14_Init 2 */
 
 }
 
