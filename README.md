@@ -15,9 +15,9 @@ Przedstawia model bramy mogącej być użytą podczas partii gier planszowych i 
 - modyfikacja modelu 3d zawierająca rozszerzenie obecnego modelu o elementy ruchome
 - projekt wizualny w stylu *Warehamëra*
 
-![zdjęcie modelu od przodu](https://via.placeholder.com/600x200?text=Gate+schematic)
+![zdjęcie modelu od przodu](asets/model_przód.JPG)
+*Zdjęcie projektu od przodu*
 
-*tu trzeba podmienić to zdjęcie.*
 
 ---
 
@@ -42,6 +42,12 @@ Przedstawia model bramy mogącej być użytą podczas partii gier planszowych i 
 | silnik | GA12 N20 50RPM z wbudowanym enkoderem magnetycznym |
 | moc | zasilanie 5v przez port USB-C |
 
+![mikro](asets/mikrokontroler.JPG)
+*Elektronika modelu*
+
+![przekładnia](asets/rack_n_pinion.JPG)
+*Mechanika przesuwania bramy*
+
 ---
 
 ## Oprogramowanie
@@ -61,17 +67,8 @@ Oprogramowanie używa standardowych bibliotek HAL (Hardware Abstraction Layer):
 
 ---
 
-## Usage
+## Działanie
 
-After flashing, the firmware runs an infinite loop that:
-- Reads the encoder value from TIM2
-- Moves the gate to a **target position** (currently 0 → 1 → 0) with a 5 second pause between moves
-- Controls motor speed and direction via PWM on TIM3
-
-To modify behavior, edit the target position logic in `main.c` and, if needed, enable and tune the PID block (lines 99‑115).
-
----
-
-## License
-
-Distributed under the **MIT License** – see the `LICENSE` file for details.
+- Po podłączeniu zasilania, następuje zerowanie układu kinematycznego (homing).
+- Następnie za każdym razem, kiedy czujnik IR wykryje przeszkodę, otwiera bramę na kilka sekund, następnie brama się zamyka.
+- Homing wykopywany jest tylko raz po restarcie, w dalszym działaniu nie jest potrzebny ponieważ enkoder liczy pozycje silnika.
