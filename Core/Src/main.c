@@ -44,24 +44,32 @@ void setMotor(uint32_t speed, uint8_t direction);
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim14;
+TIM_HandleTypeDef htim17;
 
 /* USER CODE BEGIN PV */
 uint32_t rawCounter = 0;
-int32_t signedcounter;
+// int32_t signedcounter;
 
-float motorPosition = 0;
+float motorEncoderPosition = 0;
+float motorRealPosition = 0;
+float motorOffset = 0;
 float targetPosition = 0;
+float homingOffset = 0;
 
-float kp = 0;
-float ki = 100;
-float kd = 160;
+uint8_t contactAtHome = 0;
+uint8_t contact = 0;
+uint8_t homingInProgress = 0;
 
-float dt = 0.01f;
-float Error = 0;
-float prevError = 0;
-float integral = 0;
-float derivative = 0;
-float controlOutput = 0;
+//float kp = 0;
+// float ki = 100;
+// float kd = 160;
+
+// float dt = 0.01f;
+// float Error = 0;
+// float prevError = 0;
+// float integral = 0;
+// float derivative = 0;
+// float controlOutput = 0;
 
 /* USER CODE END PV */
 
@@ -71,23 +79,25 @@ static void MX_GPIO_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_TIM14_Init(void);
+static void MX_TIM17_Init(void);
 /* USER CODE BEGIN PFP */
 
 //the sustem tick for pid control
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
-  if(htim->Instance == TIM14)
+  if(htim->Instance == TIM14) // bang bang control loop
   {
     rawCounter = __HAL_TIM_GET_COUNTER(&htim2);
     int32_t counter = (int32_t)rawCounter;
-    motorPosition = (float)counter / 4200.0f;  // 3600.0f;;//8340.0f; 3840
-    signedcounter = (int32_t)rawCounter;
+    motorEncoderPosition = (float)counter / 4200.0f;  // 3600.0f;;//8340.0f; 3840
+    motorRealPosition = motorEncoderPosition - motorOffset;
+    // signedcounter = (int32_t)rawCounter;
 
-    if (motorPosition < targetPosition - 0.01f)
+    if (motorRealPosition < targetPosition - 0.01f)
     {
       setMotor(255, 1); // Forward at full speed
     }
-    else if (motorPosition > targetPosition + 0.01f)
+    else if (motorRealPosition > targetPosition + 0.01f)
     {
       setMotor(255, 0); // Reverse at full speed
     }
@@ -116,6 +126,20 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
   }
 }
 
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+  if (GPIO_Pin == GPIO_PIN_8) // Home pin
+  {
+    contact = (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_8) == GPIO_PIN_RESET); // Active low
+  }
+  else if (GPIO_Pin == GPIO_PIN_6) // IR sensor pin
+  {
+    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == GPIO_PIN_RESET) // Active low
+    {
+      setMotor(0, 3); // Stop the motor immediately
+    }
+  }
+}
 
 /* USER CODE END PFP */
 
@@ -144,6 +168,30 @@ void setMotor(uint32_t speed, uint8_t direction)
   }
 }
 
+void homing(){
+  homingInProgress = 1;
+  HAL_TIM_Base_Start(&htim17);
+  __HAL_TIM_SET_AUTORELOAD(&htim17, 0);
+  contactAtHome = (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_8) == GPIO_PIN_RESET); // Active low
+  contact = contactAtHome;
+  if(contactAtHome){
+    setMotor(100, 1);
+    while(contact && (__HAL_TIM_GET_COUNTER(&htim17) < 3000)){
+      HAL_Delay(10);
+    }
+    HAL_Delay(100);
+    setMotor(0, 3);
+  }
+  setMotor(100, 0);
+  while(!contact && (__HAL_TIM_GET_COUNTER(&htim17) < (contactAtHome ? 6000 : 3000))){
+    HAL_Delay(10);
+  }
+  motorOffset = motorEncoderPosition + homingOffset;
+  setMotor(0, 3);
+  targetPosition = 0;
+  homingInProgress = 0;
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -160,7 +208,7 @@ int main(void)
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-   HAL_Init();
+  HAL_Init();
 
   /* USER CODE BEGIN Init */
 
@@ -178,11 +226,13 @@ int main(void)
   MX_TIM3_Init();
   MX_TIM2_Init();
   MX_TIM14_Init();
+  MX_TIM17_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
   HAL_TIM_Base_Start_IT(&htim14);
+  homing();
 
   /* USER CODE END 2 */
 
@@ -192,7 +242,7 @@ int main(void)
   {
     rawCounter = __HAL_TIM_GET_COUNTER(&htim2);
     int32_t counter = (int32_t)rawCounter;
-    motorPosition = (float)counter / 8340.0f;
+    motorEncoderPosition = (float)counter / 4200.0f;
 
     targetPosition = 1;
     HAL_Delay(5000);
@@ -392,12 +442,75 @@ static void MX_TIM14_Init(void)
 }
 
 /**
+  * @brief TIM17 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM17_Init(void)
+{
+
+  /* USER CODE BEGIN TIM17_Init 0 */
+
+  /* USER CODE END TIM17_Init 0 */
+
+  TIM_OC_InitTypeDef sConfigOC = {0};
+  TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig = {0};
+
+  /* USER CODE BEGIN TIM17_Init 1 */
+
+  /* USER CODE END TIM17_Init 1 */
+  htim17.Instance = TIM17;
+  htim17.Init.Prescaler = 16000 -1;
+  htim17.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim17.Init.Period = 65535;
+  htim17.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim17.Init.RepetitionCounter = 0;
+  htim17.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim17) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_OC_Init(&htim17) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sConfigOC.OCMode = TIM_OCMODE_TIMING;
+  sConfigOC.Pulse = 0;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
+  sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
+  if (HAL_TIM_OC_ConfigChannel(&htim17, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sBreakDeadTimeConfig.OffStateRunMode = TIM_OSSR_DISABLE;
+  sBreakDeadTimeConfig.OffStateIDLEMode = TIM_OSSI_DISABLE;
+  sBreakDeadTimeConfig.LockLevel = TIM_LOCKLEVEL_OFF;
+  sBreakDeadTimeConfig.DeadTime = 0;
+  sBreakDeadTimeConfig.BreakState = TIM_BREAK_DISABLE;
+  sBreakDeadTimeConfig.BreakPolarity = TIM_BREAKPOLARITY_HIGH;
+  sBreakDeadTimeConfig.BreakFilter = 0;
+  sBreakDeadTimeConfig.AutomaticOutput = TIM_AUTOMATICOUTPUT_DISABLE;
+  if (HAL_TIMEx_ConfigBreakDeadTime(&htim17, &sBreakDeadTimeConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM17_Init 2 */
+
+  /* USER CODE END TIM17_Init 2 */
+
+}
+
+/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
   */
 static void MX_GPIO_Init(void)
 {
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
   /* USER CODE BEGIN MX_GPIO_Init_1 */
 
   /* USER CODE END MX_GPIO_Init_1 */
@@ -405,6 +518,23 @@ static void MX_GPIO_Init(void)
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+
+  /*Configure GPIO pin : PA8 */
+  GPIO_InitStruct.Pin = GPIO_PIN_8;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PB6 */
+  GPIO_InitStruct.Pin = GPIO_PIN_6;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI4_15_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 
