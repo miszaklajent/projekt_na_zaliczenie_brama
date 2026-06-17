@@ -54,7 +54,8 @@ float motorEncoderPosition = 0;
 float motorRealPosition = 0;
 float motorOffset = 0;
 float targetPosition = 0;
-float homingOffset = 0;
+float homingOffset = 0.5f;
+float openPosition = 3.0f;
 
 uint8_t contactAtHome = 0;
 uint8_t contact = 0;
@@ -124,6 +125,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
     // else
     //   setMotor(0, 3); // Stop
   }
+  else if(htim->Instance == TIM17) // timeout for IR sensor
+  {
+    targetPosition = 0;
+    HAL_TIM_Base_Stop_IT(&htim17);
+  }
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
@@ -136,7 +142,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
   {
     if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == GPIO_PIN_RESET) // Active low
     {
-      setMotor(0, 3); // Stop the motor immediately
+      targetPosition = openPosition;
+      HAL_TIM_Base_Start_IT(&htim17);
+      __HAL_TIM_SET_AUTORELOAD(&htim17, 3000); // <-- 3 seconds timeout
+
     }
   }
 }
@@ -171,7 +180,8 @@ void setMotor(uint32_t speed, uint8_t direction)
 void homing(){
   homingInProgress = 1;
   HAL_TIM_Base_Start(&htim17);
-  __HAL_TIM_SET_AUTORELOAD(&htim17, 0);
+  __HAL_TIM_SET_AUTORELOAD(&htim17, 65535);
+  __HAL_TIM_SET_COUNTER(&htim17, 0);
   contactAtHome = (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_8) == GPIO_PIN_RESET); // Active low
   contact = contactAtHome;
   if(contactAtHome){
@@ -189,6 +199,7 @@ void homing(){
   motorOffset = motorEncoderPosition + homingOffset;
   setMotor(0, 3);
   targetPosition = 0;
+  HAL_TIM_Base_Stop(&htim17);
   homingInProgress = 0;
 }
 
