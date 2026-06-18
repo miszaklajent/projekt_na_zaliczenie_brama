@@ -57,9 +57,9 @@ float targetPosition = 0;
 float homingOffset = 0.5f;
 float openPosition = 3.0f;
 
-uint8_t contactAtHome = 0;
-uint8_t contact = 0;
-uint8_t homingInProgress = 0;
+volatile uint8_t contactAtHome = 0;
+volatile uint8_t contact = 0;
+volatile uint8_t homingInProgress = 0;
 
 //float kp = 0;
 // float ki = 100;
@@ -144,6 +144,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
     {
       targetPosition = openPosition;
       HAL_TIM_Base_Start_IT(&htim17);
+      __HAL_TIM_SET_COUNTER(&htim17, 0);
       __HAL_TIM_SET_AUTORELOAD(&htim17, 3000); // <-- 3 seconds timeout
 
     }
@@ -242,9 +243,10 @@ int main(void)
   HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
-  HAL_TIM_Base_Start_IT(&htim14);
+
   homing();
 
+  HAL_TIM_Base_Start_IT(&htim14);
   /* USER CODE END 2 */
 
   /* Infinite loop */
