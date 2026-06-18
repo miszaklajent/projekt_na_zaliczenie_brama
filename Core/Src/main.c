@@ -251,14 +251,14 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    rawCounter = __HAL_TIM_GET_COUNTER(&htim2);
-    int32_t counter = (int32_t)rawCounter;
-    motorEncoderPosition = (float)counter / 4200.0f;
+    // rawCounter = __HAL_TIM_GET_COUNTER(&htim2);
+    // int32_t counter = (int32_t)rawCounter;
+    // motorEncoderPosition = (float)counter / 4200.0f;
 
-    targetPosition = 1;
-    HAL_Delay(5000);
-    targetPosition = 0;
-    HAL_Delay(5000);
+    // targetPosition = 1;
+    // HAL_Delay(5000);
+    // targetPosition = 0;
+    // HAL_Delay(5000);
     // int targetPosition = 250*sinf(prevT/1e6);
 
 
